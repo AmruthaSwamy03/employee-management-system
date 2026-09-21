@@ -1,5 +1,13 @@
 from employee import Employee
-from storage import save_employees, load_employees
+
+from database import (
+    create_database,
+    add_employee_to_db,
+    get_all_employees,
+    search_employee_in_db,
+    update_employee_in_db,
+    delete_employee_from_db
+)
 
 
 def test_employee_creation():
@@ -37,6 +45,7 @@ def test_employee_to_dict():
     assert data["designation"] == "Software Engineer"
     assert data["salary"] == 50000
 
+
 def test_employee_attributes_can_be_updated():
 
     employee = Employee(
@@ -54,6 +63,7 @@ def test_employee_attributes_can_be_updated():
     assert employee.age == 21
     assert employee.department == "Data Engineering"
     assert employee.salary == 60000
+
 
 def test_employee_json_data():
 
@@ -75,14 +85,17 @@ def test_employee_json_data():
         "salary": 50000
     }
 
-from storage import save_employees, load_employees
 
+def test_database_crud(tmp_path, monkeypatch):
 
-def test_save_and_load_employee(tmp_path, monkeypatch):
+    test_database = tmp_path / "test_employees.db"
 
-    test_file = tmp_path / "test_employees.json"
+    monkeypatch.setattr(
+        "database.DATABASE_NAME",
+        str(test_database)
+    )
 
-    monkeypatch.setattr("storage.FILE_NAME", str(test_file))
+    create_database()
 
     employee = Employee(
         "Test User",
@@ -92,19 +105,61 @@ def test_save_and_load_employee(tmp_path, monkeypatch):
         60000
     )
 
-    save_employees([employee])
+    # CREATE
+    add_employee_to_db([employee])
 
-    loaded_employees = load_employees(Employee)
+    # READ
+    employees = get_all_employees(Employee)
 
-    assert len(loaded_employees) == 1
+    assert len(employees) == 1
+    assert employees[0].name == "Test User"
 
-    loaded_employee = loaded_employees[0]
+    # SEARCH
+    found_employee = search_employee_in_db(
+        Employee,
+        "Test User"
+    )
 
-    assert loaded_employee.name == "Test User"
-    assert loaded_employee.age == 25
-    assert loaded_employee.department == "IT"
-    assert loaded_employee.designation == "Developer"
-    assert loaded_employee.salary == 60000
+    assert found_employee is not None
+    assert found_employee.name == "Test User"
+
+    # UPDATE
+    rows_updated = update_employee_in_db(
+        "Test User",
+        26,
+        "Data Engineering",
+        "Data Engineer",
+        70000
+    )
+
+    assert rows_updated == 1
+
+    # Verify update
+    updated_employee = search_employee_in_db(
+        Employee,
+        "Test User"
+    )
+
+    assert updated_employee.age == 26
+    assert updated_employee.department == "Data Engineering"
+    assert updated_employee.designation == "Data Engineer"
+    assert updated_employee.salary == 70000
+
+    # DELETE
+    rows_deleted = delete_employee_from_db(
+        "Test User"
+    )
+
+    assert rows_deleted == 1
+
+    # Verify deletion
+    deleted_employee = search_employee_in_db(
+        Employee,
+        "Test User"
+    )
+
+    assert deleted_employee is None
+
 
 def test_employee_display(capsys):
 

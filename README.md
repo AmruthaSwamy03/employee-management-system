@@ -1,71 +1,35 @@
 # Employee Management System
 
-A Python-based Employee Management System that allows users to manage employee records using a simple command-line interface.
+A Python-based Employee Management System that uses SQLite for persistent data storage.
 
 ## Features
 
-- Add employee
+- Add employees
 - View all employees
-- Search employee
+- Search employees by name
 - Update employee details
-- Delete employee
+- Delete employees
 - Input validation
-- Duplicate employee-name prevention
-- JSON-based data persistence
-- Object-Oriented Programming
-- Automated testing with pytest
+- SQLite database storage
+- Automated testing using pytest
 
 ## Technologies Used
 
 - Python
-- JSON
-- Object-Oriented Programming (OOP)
+- SQLite
+- SQL
 - Pytest
 - Git & GitHub
 
 ## Project Structure
 
+```text
 employee-management-system/
 │
-├── main.py
+├── database.py
 ├── employee.py
-├── storage.py
-├── employees.json
+├── main.py
 ├── test_employee.py
-├── .gitignore
-└── README.md
-
-## How to Run
-
-1. Install Python.
-
-2. Clone the repository.
-
-3. Open the project folder in VS Code.
-
-4. Run:
-
-python main.py
-
-## Run Tests
-
-Install pytest:
-
-pip install pytest
-
-Run the tests:
-
-python -m pytest
-
-## Current Test Status
-
-6 tests passing.
-
-## Future Improvements
-
-- SQLite database integration
-- REST API using FastAPI
-- User authentication
-- Better user interface
-- Employee department management
-- API testing
+├── employees.db
+├── README.md
+└── .gitignore
